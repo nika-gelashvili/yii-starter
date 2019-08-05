@@ -10,36 +10,33 @@
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 
+
 $this->title = 'Create Post';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-about">
     <h1><?= Html::encode($this->title) ?></h1>
 
+
     <?php $form = ActiveForm::begin([
         'id' => 'post-form',
         'options' => ['enctype' => 'multipart/form-data'],
         'layout' => 'horizontal',
     ]); ?>
+    <?php $items = [];
 
-    <?= \yii\bootstrap\Tabs::widget([
-        'items' => [
-            [
-                'label' => 'English',
-                'content' => $this->render('/post/view/_posteng', ['postTranslation' => $postTranslation, 'form' => $form]),
-                'active' => true,
-                'id'
-            ],
-            [
-                'label' => 'ქართული',
-                'content' => $this->render('/post/view/_postgeo', ['postTranslation' => $postTranslation, 'form' => $form]),
-            ],
-            [
-                'label' => 'Русский',
-                'content' => $this->render('/post/view/_postrus', ['postTranslation' => $postTranslation, 'form' => $form]),
-            ]
-        ]
-    ]) ?>
+    foreach (Yii::$app->params['availableLocales'] as $code => $lang) {
+        $items[] = [
+            'label' => $lang,
+            'content' => $this->render('/post/view/_posteng', ['postTranslation' => $postTranslation, 'form' => $form, 'code' => $code]),
+        ];
+    }
+    ?>
+    <?php
+    echo \yii\bootstrap\Tabs::widget([
+        'items' => $items,
+    ])
+    ?>
 
 
     <?= $form->field($post, 'post_image')->fileInput(['accept' => 'image/*'])->label('Thumbnail') ?>

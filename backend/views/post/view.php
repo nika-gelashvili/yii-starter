@@ -31,17 +31,5 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'itemView' => '_postview'
     ]) ?>
-    <!--
-        --><? /*= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'post_id',
-            'post_title',
-            'post_description',
-            'post_short_description',
-            'locale',
-        ],
-    ]) */ ?>
 
 </div>

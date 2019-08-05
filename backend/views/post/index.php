@@ -6,7 +6,7 @@ use yii\grid\GridView;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Post Translations';
+$this->title = 'Post';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="post-translation-index">

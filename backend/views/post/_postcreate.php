@@ -22,23 +22,17 @@ $this->params['breadcrumbs'][] = $this->title;
         'layout' => 'horizontal',
     ]); ?>
 
-    <?= \yii\bootstrap\Tabs::widget([
-        'items' => [
-            [
-                'label' => 'English',
-                'content' => $this->render('_posteng', ['postTranslation' => $postTranslation, 'form' => $form]),
-                'active' => true,
-                'id'
-            ],
-            [
-                'label' => 'ქართული',
-                'content' => $this->render('_postgeo', ['postTranslation' => $postTranslation, 'form' => $form]),
-            ],
-            [
-                'label' => 'Русский',
-                'content' => $this->render('_postrus', ['postTranslation' => $postTranslation, 'form' => $form]),
-            ]
-        ]
+    <?php
+    $items = [];
+    foreach (Yii::$app->params['availableLocales'] as $code => $lang) {
+        $items = [
+            'label' => $lang,
+            'content' => $this->render('_posteng', ['postTranslation' => $postTranslation, 'form' => $form, 'code' => $code])
+        ];
+    }
+
+    echo \yii\bootstrap\Tabs::widget([
+        $items
     ]) ?>
 
 

@@ -1,6 +1,7 @@
 <?php
 /* @var $this yii\web\View */
 /* @var $form \yii\widgets\ActiveForm */
+/* @var $code string */
 
 /* @var $postTranslation \common\models\PostTranslation */
 
@@ -9,10 +10,10 @@ use yii\helpers\Html;
 use yii\web\View;
 
 ?>
-<?= $form->field($postTranslation, '[eng]post_title')->textInput(['autofocus' => true])->label('Title') ?>
+<?= $form->field($postTranslation, '[' . $code . ']post_title')->textInput(['autofocus' => true])->label(Yii::t('backend', 'Title')) ?>
 
-<?= $form->field($postTranslation, '[eng]post_description')->textInput()->label('Description') ?>
+<?= $form->field($postTranslation, '[' . $code . ']post_description')->textInput()->label(Yii::t('backend', 'Description')) ?>
 
-<?= $form->field($postTranslation, '[eng]post_short_description')->textInput()->label('Short Description') ?>
+<?= $form->field($postTranslation, '[' . $code . ']post_short_description')->textInput()->label(Yii::t('backend', 'Short Description')) ?>
 
-<?= $form->field($postTranslation, '[eng]locale')->hiddenInput(['value' => 'en-US'])->label(false) ?>
+<?= $form->field($postTranslation, '[' . $code . ']locale')->hiddenInput(['value' => $code])->label(false) ?>

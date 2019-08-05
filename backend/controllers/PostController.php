@@ -40,7 +40,9 @@ class PostController extends Controller
     {
         $model = new PostTranslation();
         $dataProvider = new ActiveDataProvider([
-            'query' => PostTranslation::find()->joinWith('post'),
+            'query' => PostTranslation::find()
+                ->joinWith('post')
+                ->where(['locale' => Yii::$app->language]),
         ]);
         return $this->render('index', [
             'model' => $model,
@@ -58,7 +60,8 @@ class PostController extends Controller
     {
 //        $postTranslation = PostTranslation::findOne($id);
         $dataProvider = new ActiveDataProvider([
-            'query' => PostTranslation::find()->where(['id' => $id]),
+            'query' => PostTranslation::find()
+                ->where(['id' => $id]),
             'pagination' => [
                 'pageSize' => 20,
             ],
@@ -127,6 +130,7 @@ class PostController extends Controller
 //                return var_dump($post->save());
             }
         }
+
         return $this->render('create', [
             'upload' => $upload,
             'post' => $post,
@@ -143,14 +147,14 @@ class PostController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $postTranslation = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($postTranslation->load(Yii::$app->request->post()) && $postTranslation->save()) {
+            return $this->redirect(['view', 'id' => $postTranslation->id]);
         }
 
         return $this->render('update', [
-            'model' => $model,
+            'postTranslation' => $postTranslation,
         ]);
     }
 
