@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use cheatsheet\Time;
+use common\models\Comment;
 use common\models\PostTranslation;
 use common\sitemap\UrlsIterator;
 use frontend\models\ContactForm;
@@ -75,6 +76,57 @@ class SiteController extends Controller
         return $this->render('index', [
             'model' => $model,
             'dataProvider' => $dataProvider
+        ]);
+    }
+
+    public function actionView($id, $lang)
+    {
+        $postTranslation = PostTranslation::find()->where(['post_id' => $id, 'locale' => $lang])->one();
+        $comment = new Comment();
+        if ($comment->load(Yii::$app->request->post())) {
+            $comment->created_at = new \yii\db\Expression('NOW()');
+            $comment->post_id = $id;
+            $comment->user_id = Yii::$app->user->identity->getId();
+            if ($comment->validate()) {
+                if ($comment->save()) {
+                    $this->refresh();
+                }
+            }
+        }
+        $dataProvider = new ActiveDataProvider([
+            'query' => Comment::find()
+                ->select(['comments.*', 'users.username'])
+                ->joinWith('user')
+                ->where(['post_id' => $id]),
+            'pagination' => [
+                'pageSize' => 20,
+            ],
+            'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_ASC,
+                ]
+            ],
+        ]);
+
+        $postDataProvider = new ActiveDataProvider([
+            'query' => PostTranslation::find()
+                ->where(['post_id' => $id, 'locale' => $lang]),
+            'pagination' => [
+                'pageSize' => 20,
+            ],
+            'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_ASC,
+                ]
+            ],
+        ]);
+
+
+        return $this->render('view', [
+            'model' => $postTranslation,
+            'dataProvider' => $dataProvider,
+            'comment' => $comment,
+            'postDataProvider' => $postDataProvider
         ]);
     }
 
