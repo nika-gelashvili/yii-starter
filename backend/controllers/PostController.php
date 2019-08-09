@@ -6,6 +6,7 @@ use common\models\Image;
 use common\models\Post;
 use Yii;
 use common\models\PostTranslation;
+use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -89,9 +90,8 @@ class PostController extends Controller
         $upload = new Image();
         $post = new Post();
         $postTranslationData = Yii::$app->request->post('PostTranslation');
-//        if ($postTranslation->load(Yii::$app->request->post()) && $postTranslation->save()) {
-//            return $this->redirect(['view', 'id' => $postTranslation->id]);
-//        }
+//        var_dump($postTranslationData);
+//        exit;
         if ($post->load(Yii::$app->request->post()) && $upload->load(Yii::$app->request->post())) {
 
             $filesName = Yii::$app->formatter->asTimestamp(date('Y-d-m h:i:s')) . rand(1, 999);
@@ -147,14 +147,20 @@ class PostController extends Controller
      */
     public function actionUpdate($id)
     {
-        $postTranslation = $this->findModel($id);
-
-        if ($postTranslation->load(Yii::$app->request->post()) && $postTranslation->save()) {
-            return $this->redirect(['view', 'id' => $postTranslation->id]);
+        $postTranslation = PostTranslation::find()->where(['post_id' => $id])->indexBy('locale')->all();
+        $post = Post::find()->where(['id' => $id])->one();
+        $upload = Image::find()->where(['post_id' => $id])->one();
+        if (Model::loadMultiple($postTranslation, Yii::$app->request->post()) && Model::validateMultiple($postTranslation)) {
+            foreach ($postTranslation as $key => $value) {
+                $postTranslation[$key]->save();
+            }
+            return $this->goHome();
         }
 
         return $this->render('update', [
             'postTranslation' => $postTranslation,
+            'post' => $post,
+            'upload' => $upload,
         ]);
     }
 
@@ -163,7 +169,6 @@ class PostController extends Controller
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete($id)
     {

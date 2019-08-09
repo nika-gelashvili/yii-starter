@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -28,7 +29,25 @@ $this->params['breadcrumbs'][] = $this->title;
             'post_short_description',
             'locale',
             'post.post_image',
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn',
+                'buttons' => [
+                    'view' => function ($url, $model) {
+                        $url = Url::to(['post/view', 'id' => $model['id']]);
+                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', $url, [
+                        ]);
+                    },
+                    'update' => function ($url, $model) {
+                        $url = Url::to(['post/update', 'id' => $model['post_id']]);
+                        return Html::a('<span class="glyphicon glyphicon-pencil"></span>', $url, [
+                        ]);
+                    },
+                    'delete' => function ($url, $model) {
+                        $url = Url::to(['post/delete', 'id' => $model['id']]);
+                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
+                        ]);
+                    },
+                ],
+            ]
         ],
     ]); ?>
 </div>

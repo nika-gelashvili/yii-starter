@@ -3,11 +3,13 @@
 namespace frontend\controllers;
 
 use cheatsheet\Time;
+use common\models\PostTranslation;
 use common\sitemap\UrlsIterator;
 use frontend\models\ContactForm;
 use Sitemaped\Element\Urlset\Urlset;
 use Sitemaped\Sitemap;
 use Yii;
+use yii\data\ActiveDataProvider;
 use yii\filters\PageCache;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
@@ -57,7 +59,23 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $option = Yii::$app->language;
+        $model = new PostTranslation();
+        $dataProvider = new ActiveDataProvider([
+            'query' => PostTranslation::find()->where(['locale' => $option]),
+            'pagination' => [
+                'pageSize' => 20,
+            ],
+            'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_ASC,
+                ]
+            ],
+        ]);
+        return $this->render('index', [
+            'model' => $model,
+            'dataProvider' => $dataProvider
+        ]);
     }
 
     /**

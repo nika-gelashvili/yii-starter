@@ -26,10 +26,17 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php $items = [];
 
     foreach (Yii::$app->params['availableLocales'] as $code => $lang) {
-        $items[] = [
-            'label' => $lang,
-            'content' => $this->render('/post/view/_posteng', ['postTranslation' => $postTranslation, 'form' => $form, 'code' => $code]),
-        ];
+        if (is_array($postTranslation)) {
+            $items[] = [
+                'label' => $lang,
+                'content' => $this->render('/post/view/_posteng', ['postTranslation' => $postTranslation[$code], 'form' => $form, 'code' => $code])
+            ];
+        } else {
+            $items[] = [
+                'label' => $lang,
+                'content' => $this->render('/post/view/_posteng', ['postTranslation' => $postTranslation, 'form' => $form, 'code' => $code]),
+            ];
+        }
     }
     ?>
     <?php
