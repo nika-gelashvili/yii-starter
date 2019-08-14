@@ -14,6 +14,7 @@ use Yii;
  * @property string $server
  * @property string $latest_full_headers
  * @property string $secure
+ * @property string domain_name
  */
 class Domain extends \yii\db\ActiveRecord
 {

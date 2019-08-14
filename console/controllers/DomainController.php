@@ -13,6 +13,7 @@ use Yii;
 use phpDocumentor\Reflection\Types\This;
 use yii\console\Controller;
 use yii\db\Exception;
+use yii\helpers\Console;
 
 class DomainController extends Controller
 {
@@ -73,7 +74,6 @@ class DomainController extends Controller
     }
 
     /* @return array|string
-     * @var $s Domain
      * @var $domainName string
      * @var $ip string
      * @var $region array|string
@@ -82,23 +82,22 @@ class DomainController extends Controller
      * @var $secure string
      */
 
-    public function saveToDatabase($s, $domainName, $ip, $region, $server, $header, $secure)
+    public function saveToDatabase($domainName, $ip, $region, $server, $header, $secure)
     {
-        if (empty($s)) {
-            $s = new Domain();
+        $domain = Domain::findOne(['domain_name' => $domainName]);
+
+        if (!$domain) {
+            $domain = new Domain();
         }
-        $s->domain_name = $domainName;
-        $s->ip = $ip;
-        $s->region = $region['regionName'];
-        $s->region_json = json_encode($region);
-        $s->server = $server;
-        $s->latest_full_headers = json_encode($header);
-        $s->secure = $secure;
-        if ($s->save()) {
-            return 'Done';
-        } else {
-            return $s->errors;
-        }
+        $domain->domain_name = $domainName;
+        $domain->ip = $ip;
+        $domain->region = $region['regionName'];
+        $domain->region_json = json_encode($region);
+        $domain->server = is_array($server) ? $server[0] : $server;
+        $domain->latest_full_headers = json_encode($header);
+        $domain->secure = $secure;
+
+        return $domain->save();
     }
 
     /* @return array */
@@ -125,27 +124,24 @@ class DomainController extends Controller
     public function actionGetDomainData()
     {
         $domains = $this->parseFile();
-        $n = 0;
+        $counter = 0;
+
         foreach ($domains as $domain) {
-            var_dump($domain);
-            if (filter_var($this->findIpAddress($domain), FILTER_VALIDATE_IP)) {
-                $ip = $this->findIpAddress($domain);
-                var_dump($ip);
-            } else {
+
+            $ip = $this->findIpAddress($domain);
+
+            if (!filter_var($ip, FILTER_VALIDATE_IP)) {
                 continue;
             }
+
             $header = $this->retrieveHeaders();
-            var_dump($header);
             $region = $this->regionInfo();
-            var_dump($region);
             $secure = $this->isSecure($domain);
-            var_dump($secure);
-            $server = array_key_exists('Server', $header) ? $header['Server'][0] : 'No Server Info';
-            $findDomain = Domain::findOne(['domain_name' => $domain]);
-            $updateResponse = $this->saveToDatabase($findDomain, $domain, $ip, $region, $server, $header, $secure);
-            var_dump($updateResponse);
-            $n++;
-            var_dump($n);
+
+            $server = array_key_exists('Server', $header) ? $header['Server'] : 'No Server Info';
+            $this->saveToDatabase($domain, $ip, $region, $server, $header, $secure);
+
+            Console::output("Processed: " . $counter++);
         }
     }
 }
