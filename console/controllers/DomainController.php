@@ -74,6 +74,7 @@ class DomainController extends Controller
 
     /* @return array|string
      * @var $s Domain
+     * @var $domainName string
      * @var $ip string
      * @var $region array|string
      * @var $server array|string
@@ -81,13 +82,17 @@ class DomainController extends Controller
      * @var $secure string
      */
 
-    public function saveToDatabase($s, $ip, $region, $server, $header, $secure)
+    public function saveToDatabase($s, $domainName, $ip, $region, $server, $header, $secure)
     {
+        if (empty($s)) {
+            $s = new Domain();
+        }
+        $s->domain_name = $domainName;
         $s->ip = $ip;
         $s->region = $region['regionName'];
-        $s->region_json = $region;
+        $s->region_json = json_encode($region);
         $s->server = $server;
-        $s->latest_full_headers = $header;
+        $s->latest_full_headers = json_encode($header);
         $s->secure = $secure;
         if ($s->save()) {
             return 'Done';
@@ -99,7 +104,6 @@ class DomainController extends Controller
     /* @return array */
     public function regionInfo()
     {
-//        $ip = $this->findIpAddress();
         $ip = $this->ip;
         $data = json_decode(file_get_contents("http://ip-api.com/json/" . $ip), true);
         return $data;
@@ -137,17 +141,10 @@ class DomainController extends Controller
             $secure = $this->isSecure($domain);
             var_dump($secure);
             $server = array_key_exists('Server', $header) ? $header['Server'][0] : 'No Server Info';
-            $domainModel = new Domain();
             $findDomain = Domain::findOne(['domain_name' => $domain]);
-            if (empty($findDomain)) {
-                $updateResponse = $this->saveToDatabase($findDomain, $ip, $region, $server, $header, $secure);
-                var_dump($updateResponse);
-                $n++;
-            } else {
-                $createResponse = $this->saveToDatabase($domainModel, $ip, $region, $server, $header, $secure);
-                var_dump($createResponse);
-                $n++;
-            }
+            $updateResponse = $this->saveToDatabase($findDomain, $domain, $ip, $region, $server, $header, $secure);
+            var_dump($updateResponse);
+            $n++;
             var_dump($n);
         }
     }
