@@ -95,7 +95,7 @@ class SiteController extends Controller
         }
         $dataProvider = new ActiveDataProvider([
             'query' => Comment::find()
-                ->select(['comments.*', 'users.username'])
+                ->select(['comments.*', 'user.username'])
                 ->joinWith('user')
                 ->where(['post_id' => $id]),
             'pagination' => [
