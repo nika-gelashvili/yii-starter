@@ -9,6 +9,7 @@
 namespace console\controllers;
 
 use common\models\Domain;
+use common\models\GoogleAnalytics;
 use Yii;
 use phpDocumentor\Reflection\Types\This;
 use yii\console\Controller;
@@ -18,10 +19,16 @@ use yii\helpers\Console;
 class DomainController extends Controller
 {
     private $ip = null;
+    public $key = '';
+
+    public function options($actionID)
+    {
+        return array_merge(parent::options($actionID), ['key']);
+    }
 
     /* @return array
      */
-    public function parseFile()
+    private function parseFile()
     {
         $domains = [];
         $fileLocation = Yii::getAlias('@storage') . '/web/source/top500Domains.csv';
@@ -36,7 +43,7 @@ class DomainController extends Controller
     /* @return string
      * @var $domain string
      */
-    public function findIpAddress($domain)
+    private function findIpAddress($domain)
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $domain);
@@ -55,7 +62,7 @@ class DomainController extends Controller
     /* @return array|string
      *
      */
-    public function retrieveHeaders()
+    private function retrieveHeaders()
     {
         try {
             $ip = $this->ip;
@@ -82,7 +89,7 @@ class DomainController extends Controller
      * @var $secure string
      */
 
-    public function saveToDatabase($domainName, $ip, $region, $server, $header, $secure)
+    private function saveToDatabase($domainName, $ip, $region, $server, $header, $secure)
     {
         $domain = Domain::findOne(['domain_name' => $domainName]);
 
@@ -97,11 +104,11 @@ class DomainController extends Controller
         $domain->latest_full_headers = json_encode($header);
         $domain->secure = $secure;
 
-        return $domain->save();
+        return [$domain->save(), $domain->id];
     }
 
     /* @return array */
-    public function regionInfo()
+    private function regionInfo()
     {
         $ip = $this->ip;
         $data = json_decode(file_get_contents("http://ip-api.com/json/" . $ip), true);
@@ -111,7 +118,7 @@ class DomainController extends Controller
     /* @return string
      * @var $domain string
      */
-    public function isSecure($domain)
+    private function isSecure($domain)
     {
         $ssl_check = @fsockopen('ssl://' . $domain, 443, $errno, $errstr, 30);
         $res = !!$ssl_check;
@@ -121,13 +128,105 @@ class DomainController extends Controller
         return strval($res);
     }
 
+    /* @return bool|void
+     * @var $domain string
+     * @var $id integer
+     */
+    private function parseGoogleAnalyticsAPI($domain, $id)
+    {
+        $ch = curl_init();
+        $domain = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://' . $domain . '&key=' . $this->key;
+        curl_setopt($ch, CURLOPT_URL, $domain);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json'));
+        $content = curl_exec($ch);
+        curl_close($ch);
+        $real_content = json_decode($content);
+        if (isset($real_content->error)) {
+            return $real_content->error;
+        }
+        return $this->saveGoogleAnalytics($real_content, $id);
+    }
+
+    private function saveGoogleAnalytics($json, $id)
+    {
+        $googleAnalytics = GoogleAnalytics::findOne(['domain_id' => $id]);
+        if (!$googleAnalytics) {
+            $googleAnalytics = new GoogleAnalytics();
+        }
+        if (array_key_exists('metrics', $json->loadingExperience)) {
+            $googleAnalytics->load_first_contentful_paint = $json
+                ->loadingExperience
+                ->metrics
+                ->FIRST_CONTENTFUL_PAINT_MS
+                ->category;
+            $googleAnalytics->load_first_input_delay = $json
+                ->loadingExperience
+                ->metrics
+                ->FIRST_INPUT_DELAY_MS
+                ->category;
+            $googleAnalytics->origin_first_contentful_paint = $json
+                ->originLoadingExperience
+                ->metrics
+                ->FIRST_CONTENTFUL_PAINT_MS
+                ->category;
+
+        } else {
+            $googleAnalytics->load_first_contentful_paint = 'No Data';
+            $googleAnalytics->load_first_input_delay = 'No Data';
+            $googleAnalytics->origin_first_contentful_paint = 'No Data';
+        }
+        $googleAnalytics->light_first_contentful_paint = $json
+            ->lighthouseResult
+            ->audits
+            ->{'first-contentful-paint'}
+            ->displayValue;
+        $googleAnalytics->light_speed_index = $json
+            ->lighthouseResult
+            ->audits
+            ->{'speed-index'}
+            ->displayValue;
+        $googleAnalytics->light_time_to_interactive = $json
+            ->lighthouseResult
+            ->audits
+            ->{'interactive'}
+            ->displayValue;
+        $googleAnalytics->light_first_cpu_idle = $json
+            ->lighthouseResult
+            ->audits
+            ->{'first-cpu-idle'}
+            ->displayValue;
+        $googleAnalytics->light_first_meaningful_paint = $json
+            ->lighthouseResult
+            ->audits
+            ->{'first-meaningful-paint'}
+            ->displayValue;
+        $googleAnalytics->light_estimated_input_latency = $json
+            ->lighthouseResult
+            ->audits
+            ->{'estimated-input-latency'}
+            ->displayValue;
+        $googleAnalytics->captcha = $json
+            ->captchaResult;
+        $googleAnalytics->kind = $json
+            ->kind;
+        $googleAnalytics->time = $json
+            ->analysisUTCTimestamp;
+        $googleAnalytics->domain_id = $id;
+
+        return $googleAnalytics->save();
+    }
+
     public function actionGetDomainData()
     {
         $domains = $this->parseFile();
         $counter = 0;
 
         foreach ($domains as $domain) {
-
+//            if ($domain != 'networkadvertising.org') {
+//                continue;
+//            }
             $ip = $this->findIpAddress($domain);
 
             if (!filter_var($ip, FILTER_VALIDATE_IP)) {
@@ -137,10 +236,9 @@ class DomainController extends Controller
             $header = $this->retrieveHeaders();
             $region = $this->regionInfo();
             $secure = $this->isSecure($domain);
-
             $server = array_key_exists('Server', $header) ? $header['Server'] : 'No Server Info';
-            $this->saveToDatabase($domain, $ip, $region, $server, $header, $secure);
-
+            $id = $this->saveToDatabase($domain, $ip, $region, $server, $header, $secure)[1];
+            var_dump($this->parseGoogleAnalyticsAPI($domain, $id));
             Console::output("Processed: " . $counter++);
         }
     }
