@@ -24,6 +24,7 @@ $this->beginContent('@frontend/views/layouts/_clear.php')
                 ['label' => Yii::t('frontend', 'Articles'), 'url' => ['/article/index']],
                 ['label' => Yii::t('frontend', 'Contact'), 'url' => ['/site/contact']],
                 ['label' => Yii::t('frontend', 'Page Speed'), 'url' => ['/page-speed/index']],
+                ['label' => Yii::t('frontend', 'Charts'), 'url' => ['/chart/index']],
                 ['label' => Yii::t('frontend', 'Signup'), 'url' => ['/user/sign-in/signup'], 'visible' => Yii::$app->user->isGuest],
                 ['label' => Yii::t('frontend', 'Login'), 'url' => ['/user/sign-in/login'], 'visible' => Yii::$app->user->isGuest],
                 [
