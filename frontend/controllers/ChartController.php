@@ -36,6 +36,23 @@ class ChartController extends Controller
         if (\Yii::$app->request->isAjax) {
             return $this->renderAjax('data');
         }
+        return $this->actionIndex();
+    }
+
+    public function actionDelay()
+    {
+        if (\Yii::$app->request->isAjax) {
+            return $this->renderAjax('delay');
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionResponse()
+    {
+        if (\Yii::$app->request->isAjax) {
+            return $this->renderAjax('response');
+        }
+        return $this->actionIndex();
     }
 
 }
