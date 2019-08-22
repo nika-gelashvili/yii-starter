@@ -55,4 +55,12 @@ class ChartController extends Controller
         return $this->actionIndex();
     }
 
+    public function actionServer()
+    {
+        if (\Yii::$app->request->isAjax) {
+            return $this->renderAjax('server');
+        }
+        return $this->actionIndex();
+    }
+
 }

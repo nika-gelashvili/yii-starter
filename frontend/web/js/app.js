@@ -42,6 +42,40 @@ $('select').change(function () {
                 };
                 drawChart(ctx, chartData, 'bar');
             });
+        } else if ($(this).val() === 'Server Types') {
+            ajaxData('server', function (data) {
+                let array = jsonToArray(data, 'server', 'amount');
+                let server = array[0];
+                let amount = array[1];
+                let chartData = {
+                    labels: server,
+                    datasets: [{
+                        label: 'Server Type',
+                        data: amount,
+                        backgroundColor: ['rgb(255,0,0)',
+                            'rgb(255,127,0)',
+                            'rgb(255,255,0)',
+                            'rgb(0,255,0)',
+                            'rgb(0,0,255)',
+                            'rgb( 39,0,51)',
+                            'rgb(139,0,255)',
+                            'rgb(110,52,112)',
+                            'rgb(118,220,63)',
+                            'rgb(27,162,69)',
+                            'rgb(125,209,197)',
+                            'rgb(157,105,191)',
+                            'rgb(113,164,139)',
+                            'rgb(137,222,109)',
+                            'rgb(94,130,202)',
+                            'rgb(67,2,241)',
+                            'rgb(115,43,255)',
+                            'rgb(64,114,68)',
+                            'rgb(202,33,3)',
+                        ]
+                    }]
+                };
+                drawChart(ctx, chartData, 'bar');
+            });
         } else {
             ajaxData('response', function (data) {
                 let array = jsonToArray(data, 'response delay', 'domains')
