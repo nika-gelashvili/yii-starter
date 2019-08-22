@@ -28,14 +28,13 @@ class ChartController extends Controller
 
     public function actionIndex()
     {
-//        $regionsData = Domain::find()->select(['region', 'count(*) as amount'])->groupBy('region')->createCommand()->queryAll();
         return $this->render('index');
     }
 
     public function actionData()
     {
         if (\Yii::$app->request->isAjax) {
-            return \Yii::$app->request->post('data');
+            return $this->renderAjax('data');
         }
     }
 

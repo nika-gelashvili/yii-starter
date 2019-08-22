@@ -6,23 +6,6 @@
  * Time: 17:59
  */
 /* @var $regionsData \frontend\controllers\ChartController */
+\frontend\assets\FrontendAsset::register($this);
 ?>
-
-<canvas id="regionChart" width="100%" height="400"></canvas>
-<?php
-//var_dump($regionsData);
-
-$this->registerJS(/** @lang JavaScript */ "
-  $.ajax({
-url : 'data',
-type : 'POST',
-data:{_csrf: yii.getCsrfToken()},
-success:function(data){
-console.log(data)
-},
-error: function(data){
-console.log(data)
-}
-});
-", \yii\web\View::POS_LOAD);
-?>
+<canvas id="regionChart" width="400" height="400"></canvas>
