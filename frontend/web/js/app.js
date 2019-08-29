@@ -7,18 +7,16 @@ let ctx = document.getElementById('regionChart');
 
 let dataChart = null;
 
+
 $('select').change(function () {
         if ($(this).val() === 'Domains in Region') {
             ajaxData('data', function (data) {
                 let array = jsonToArray(data, 'region', 'amount');
-                let region = array[0];
-                let amount = array[1];
-                // console.log(number);
                 let chartData = {
-                    labels: region,
+                    labels: array[0],
                     datasets: [{
                         label: 'Servers in Region',
-                        data: amount,
+                        data: array[1],
                         backgroundColor: 'rgb(255, 99, 132)',
                         borderColor: 'rgb(255, 99, 132)'
                     }]
@@ -76,7 +74,7 @@ $('select').change(function () {
                 };
                 drawChart(ctx, chartData, 'bar');
             });
-        } else {
+        } else if ($(this).val() === 'Response Time') {
             ajaxData('response', function (data) {
                 let array = jsonToArray(data, 'response delay', 'domains')
                 let responseDelay = array[0];

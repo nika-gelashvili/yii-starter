@@ -12,6 +12,7 @@ use Sitemaped\Sitemap;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\PageCache;
+use yii\filters\VerbFilter;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\Response;
@@ -27,11 +28,12 @@ class SiteController extends Controller
     public function behaviors()
     {
         return [
-            [
-                'class' => PageCache::class,
-                'only' => ['sitemap'],
-                'duration' => Time::SECONDS_IN_AN_HOUR,
-            ]
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'index' => ['get'],
+                ],
+            ],
         ];
     }
 
@@ -156,38 +158,38 @@ class SiteController extends Controller
         ]);
     }
 
-    /**
-     * @param string $format
-     * @param bool $gzip
-     * @return string
-     * @throws BadRequestHttpException
-     */
-    public function actionSitemap($format = Sitemap::FORMAT_XML, $gzip = false)
-    {
-        $links = new UrlsIterator();
-        $sitemap = new Sitemap(new Urlset($links));
-
-        Yii::$app->response->format = Response::FORMAT_RAW;
-
-        if ($gzip === true) {
-            Yii::$app->response->headers->add('Content-Encoding', 'gzip');
-        }
-
-        if ($format === Sitemap::FORMAT_XML) {
-            Yii::$app->response->headers->add('Content-Type', 'application/xml');
-            $content = $sitemap->toXmlString($gzip);
-        } else if ($format === Sitemap::FORMAT_TXT) {
-            Yii::$app->response->headers->add('Content-Type', 'text/plain');
-            $content = $sitemap->toTxtString($gzip);
-        } else {
-            throw new BadRequestHttpException('Unknown format');
-        }
-
-        $linksCount = $sitemap->getCount();
-        if ($linksCount > 50000) {
-            Yii::warning(\sprintf('Sitemap links count is %d'), $linksCount);
-        }
-
-        return $content;
-    }
+//    /**
+//     * @param string $format
+//     * @param bool $gzip
+//     * @return string
+//     * @throws BadRequestHttpException
+//     */
+//    public function actionSitemap($format = Sitemap::FORMAT_XML, $gzip = false)
+//    {
+//        $links = new UrlsIterator();
+//        $sitemap = new Sitemap(new Urlset($links));
+//
+//        Yii::$app->response->format = Response::FORMAT_RAW;
+//
+//        if ($gzip === true) {
+//            Yii::$app->response->headers->add('Content-Encoding', 'gzip');
+//        }
+//
+//        if ($format === Sitemap::FORMAT_XML) {
+//            Yii::$app->response->headers->add('Content-Type', 'application/xml');
+//            $content = $sitemap->toXmlString($gzip);
+//        } else if ($format === Sitemap::FORMAT_TXT) {
+//            Yii::$app->response->headers->add('Content-Type', 'text/plain');
+//            $content = $sitemap->toTxtString($gzip);
+//        } else {
+//            throw new BadRequestHttpException('Unknown format');
+//        }
+//
+//        $linksCount = $sitemap->getCount();
+//        if ($linksCount > 50000) {
+//            Yii::warning(\sprintf('Sitemap links count is %d'), $linksCount);
+//        }
+//
+//        return $content;
+//    }
 }
