@@ -15,12 +15,15 @@ class PageSpeedController extends \yii\web\Controller
         ]);
         $model->addRule(['url'], 'required')
             ->addRule(['url'], 'string', ['max' => 30]);
-        if ($model->load(Yii::$app->request->post())) {
-            $pageSpeed = $this->pageSpeed($model->url);
-            return $this->render('index', ['pageSpeed' => $pageSpeed, 'model' => $model]);
+        if (Yii::$app->request->isAjax) {
+            $url = Yii::$app->request->post('url');
+            $model->url = $url;
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            return $this->pageSpeed($url);
         }
-        $pageSpeed = $this->pageSpeed('developers.google.com');
-        return $this->render('index', ['pageSpeed' => $pageSpeed, 'model' => $model]);
+        return $this->render('index', [
+            'model' => $model
+        ]);
     }
 
     /* @return mixed
@@ -41,7 +44,6 @@ class PageSpeedController extends \yii\web\Controller
             var_dump($real_content->error);
             exit;
         }
-
         return $real_content;
     }
 

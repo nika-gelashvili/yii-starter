@@ -21,8 +21,6 @@ $this->beginContent('@frontend/views/layouts/_clear.php')
             'options' => ['class' => 'navbar-nav navbar-right'],
             'items' => [
                 ['label' => Yii::t('frontend', 'Home'), 'url' => ['/site/index']],
-                ['label' => Yii::t('frontend', 'Articles'), 'url' => ['/article/index']],
-                ['label' => Yii::t('frontend', 'Contact'), 'url' => ['/site/contact']],
                 ['label' => Yii::t('frontend', 'Page Speed'), 'url' => ['/page-speed/index']],
                 ['label' => Yii::t('frontend', 'Charts'), 'url' => ['/chart/index']],
                 ['label' => Yii::t('frontend', 'Signup'), 'url' => ['/user/sign-in/signup'], 'visible' => Yii::$app->user->isGuest],

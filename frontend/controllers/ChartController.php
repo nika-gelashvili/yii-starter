@@ -66,7 +66,7 @@ class ChartController extends Controller
     {
         if (\Yii::$app->request->isAjax) {
             \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-            return Yii::$app->db->createCommand('select concat(20*floor(light_estimated_input_latency/20), \'-\' ,20*floor(light_estimated_input_latency/20)+20) as `response delay`, count(*) as domains
+            return \Yii::$app->db->createCommand('select concat(20*floor(light_estimated_input_latency/20), \'-\' ,20*floor(light_estimated_input_latency/20)+20) as `response delay`, count(*) as domains
 from google_analytics
 where light_estimated_input_latency <100
 group by 1
