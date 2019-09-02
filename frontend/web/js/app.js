@@ -3,7 +3,7 @@
  */
 import Chart from 'chart.js';
 
-let ctx = document.getElementById('regionChart');
+let ctx = $('#regionChart');
 
 let dataChart = null;
 
@@ -95,6 +95,8 @@ $('select').change(function () {
                 };
                 drawChart(ctx, chartData, 'pie')
             });
+        } else {
+            ctx.hide();
         }
     }
 );

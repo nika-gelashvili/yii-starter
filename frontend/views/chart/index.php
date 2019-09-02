@@ -14,4 +14,4 @@
     <option>Response Time</option>
     <option>Server Types</option>
 </select>
-<canvas id="regionChart" width="400" height="400"></canvas>
+<canvas id="regionChart" width="400" height="400" hidden></canvas>

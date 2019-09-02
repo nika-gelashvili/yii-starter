@@ -64,7 +64,7 @@ $this->title = 'Page Speed';
         </div>
     </div>
 </div>
-<p id="errorMessage">Unable to retrieve data</p>
+<p id="errorMessage" hidden>Unable to retrieve data</p>
 <?php
 $this->registerJSFile('@web/js/page-speed/app.js',
     ['depends' => [\yii\web\JqueryAsset::className()]]

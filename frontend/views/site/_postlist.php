@@ -6,19 +6,31 @@ use yii\helpers\Html;
 use yii\helpers\StringHelper;
 
 ?>
-<div style="padding: 5px;position: relative;font-size: 30px;font-style:normal;margin-top: 30px;">
-    <?= HTML::encode($model->post_title) ?>
-    <div style="padding: 5px; overflow:auto; width:50%;">
-        <p style="float:left; margin-right: 15px;">
-            <?php
-            echo Html::img('@web/source/upload/' . $model->post->post_image, ['width' => '150px', 'height' => '100px']);
-            ?>
-        </p>
-        <p style="font-size: medium">
-            <?php echo Html::encode($model->post_short_description) ?>
-        </p>
-    </div>
-    <div style="width: 100%;height: 35px;">
-        <?= Html::a('View', ['view', 'id' => $model->post->id, 'lang' => $model->locale], ['class' => 'btn btn-primary', 'style' => ['float' => 'right']]) ?>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-5 ">
+                    <h2><?= HTML::encode($model->post_title) ?></h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <?= Html::img('@storage/web/source/upload/' . $model->post->post_image, ['class' => 'img-responsive']); ?>
+                </div>
+                <div class="col-md-9">
+                    <p>
+                        <?php echo Html::encode($model->post_short_description) ?>
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-offset-8">
+                    <p>
+                        <?= Html::a('View', ['view', 'id' => $model->post->id, 'lang' => $model->locale], ['class' => 'btn btn-primary btn-md']) ?>
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
