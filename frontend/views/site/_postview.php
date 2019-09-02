@@ -11,7 +11,7 @@
 use yii\helpers\Html; ?>
 <div style="margin-top: 50px;margin-bottom: 30px;">
     <div>
-        <h1><?= \yii\helpers\Html::encode($model->post_title) ?></h1>
+        <h1 style="height: "><?= \yii\helpers\Html::encode($model->post_title) ?></h1>
 
         <?php
         //        var_dump($model->post->post_image);
@@ -25,19 +25,22 @@ use yii\helpers\Html; ?>
             $images = [];
             $url = Yii::getAlias('@storageUrl');
             foreach ($model->post->images as $imageItem) {
-                $images[] = '<img src="' . $url . '/source/upload/' . $imageItem->image . '"/>';
+                $images[] = '<img src="' .
+                    $url .
+                    '/source/upload/' .
+                    $imageItem->image .
+                    '" class="img-responsive" style="height: 200px; width: 350px"/>';
             }
-
             echo \yii\bootstrap\Carousel::widget([
                 'items' => $images,
                 'options' => [
                     'style' =>
                         [
                             'width' => '350px',
-                            'height' => '150px',
+                            'height' => '200px',
                         ]
                 ]
-            ]) ?>
+            ]); ?>
         </div>
     </div>
 </div>

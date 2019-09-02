@@ -75,7 +75,7 @@ class PostController extends Controller
 //        var_dump($this->findModel($id));
 //        exit;
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => PostTranslation::findOne($id),
             'dataProvider' => $dataProvider,
         ]);
     }
