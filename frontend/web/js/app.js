@@ -17,8 +17,7 @@ $('select').change(function () {
                     datasets: [{
                         label: 'Servers in Region',
                         data: array[1],
-                        backgroundColor: 'rgb(255, 99, 132)',
-                        borderColor: 'rgb(255, 99, 132)'
+                        backgroundColor: chartCollor(array[1].length)
                     }]
                 };
                 drawChart(ctx, chartData, 'bar');
@@ -34,8 +33,7 @@ $('select').change(function () {
                     datasets: [{
                         label: 'Server Delay',
                         data: domain,
-                        backgroundColor: 'rgb(255, 99, 132)',
-                        borderColor: 'rgb(255, 99, 132)'
+                        backgroundColor: chartCollor(domain.length)
                     }]
                 };
                 drawChart(ctx, chartData, 'bar');
@@ -50,26 +48,7 @@ $('select').change(function () {
                     datasets: [{
                         label: 'Server Type',
                         data: amount,
-                        backgroundColor: ['rgb(255,0,0)',
-                            'rgb(255,127,0)',
-                            'rgb(255,255,0)',
-                            'rgb(0,255,0)',
-                            'rgb(0,0,255)',
-                            'rgb( 39,0,51)',
-                            'rgb(139,0,255)',
-                            'rgb(110,52,112)',
-                            'rgb(118,220,63)',
-                            'rgb(27,162,69)',
-                            'rgb(125,209,197)',
-                            'rgb(157,105,191)',
-                            'rgb(113,164,139)',
-                            'rgb(137,222,109)',
-                            'rgb(94,130,202)',
-                            'rgb(67,2,241)',
-                            'rgb(115,43,255)',
-                            'rgb(64,114,68)',
-                            'rgb(202,33,3)',
-                        ]
+                        backgroundColor: chartCollor(amount.length)
                     }]
                 };
                 drawChart(ctx, chartData, 'bar');
@@ -83,14 +62,7 @@ $('select').change(function () {
                     labels: responseDelay,
                     datasets: [{
                         data: domain,
-                        backgroundColor: ['rgb(255, 0, 0)',
-                            'rgb(255, 127, 0)',
-                            'rgb(255, 255, 0)',
-                            'rgb(0, 255, 0)',
-                            'rgb(0, 0, 255)',
-                            'rgb( 39, 0, 51)',
-                            'rgb(139, 0, 255)',
-                        ]
+                        backgroundColor: chartCollor(domain.length)
                     }]
                 };
                 drawChart(ctx, chartData, 'pie')
@@ -138,4 +110,12 @@ function drawChart(ctx, data, type) {
             maintainAspectRatio: false
         }
     });
+}
+
+function chartCollor(amount) {
+    let backgroundColor = [];
+    for (let i = 0; i < amount; i++) {
+        backgroundColor.push('rgb(' + Math.floor(Math.random() * 255) + ',' + Math.floor(Math.random() * 255) + ',' + Math.floor(Math.random() * 255) + ')');
+    }
+    return backgroundColor;
 }
