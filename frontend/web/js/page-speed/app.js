@@ -1,6 +1,6 @@
 $('.check-button').click(function () {
     $('#main').find('.removableElement').each((key, value) => {
-        console.log(value);
+        value.remove();
     });
     ajaxData(function (data) {
         $('#load-fcp').append(createHtmlElement(data.loadingExperience.metrics.FIRST_CONTENTFUL_PAINT_MS.category));
@@ -25,16 +25,23 @@ function ajaxData(returnData) {
         type: 'POST',
         dataType: 'JSON',
         data: {_csrf: yii.getCsrfToken(), url: $('#url').val()},
+        beforeSend: function () {
+            $('#ajaxSpinner').show();
+        },
         success: function (data) {
             returnData(data);
         },
+        complete: function () {
+            $('#ajaxSpinner').hide();
+            $('#main').css('display', 'flex');
+        },
         error: function () {
-            console.log('error');
+            $('#errorMessage').show();
         }
     });
 }
 
 function createHtmlElement(data) {
-    let htmlData = $('<p>' + data + '</p>', {'class': 'removableElement'});
-    return htmlData;
+    // let htmlData = $('<p>' + data + '</p>', {class: 'removableElement'});
+    return $('<p/>').addClass('removableElement').text(data);
 }

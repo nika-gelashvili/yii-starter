@@ -16,7 +16,10 @@ $this->title = 'Page Speed';
     <?= Html::Button('Check', ['class' => 'btn btn-primary check-button']) ?>
     <?php ActiveForm::end() ?>
 </div>
-<div id="main" style="margin-top: 100px;margin-bottom: 100px;display: flex;">
+<div id="ajaxSpinner" hidden>
+    <?= Html::img('@web/img/Spinner-1s-200px.gif', ['style' => ['width' => '100px', 'height' => '100px']]) ?>
+</div>
+<div id="main" style="margin-top: 100px;margin-bottom: 100px;display: none;">
     <div style="flex: 50%">
         <div id="load-fcp" style="margin-top: 5px">
             <h3>First Contentful Paint</h3>
@@ -61,7 +64,7 @@ $this->title = 'Page Speed';
         </div>
     </div>
 </div>
-
+<p id="errorMessage">Unable to retrieve data</p>
 <?php
 $this->registerJSFile('@web/js/page-speed/app.js',
     ['depends' => [\yii\web\JqueryAsset::className()]]
