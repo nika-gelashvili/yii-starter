@@ -42,8 +42,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         ]);
                     },
                     'delete' => function ($url, $model) {
-                        $url = Url::to(['post/delete', 'id' => $model['id']]);
+                        $url = Url::to(['post/delete', 'id' => $model['post_id']]);
                         return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
+                            'data-method' => 'POST'
                         ]);
                     },
                 ],

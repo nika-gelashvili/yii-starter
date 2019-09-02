@@ -181,12 +181,12 @@ class PostController extends Controller
      * Finds the PostTranslation model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return PostTranslation the loaded model
+     * @return Post the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = PostTranslation::findOne($id)) !== null) {
+        if (($model = Post::findOne($id)) !== null) {
             return $model;
         }
 

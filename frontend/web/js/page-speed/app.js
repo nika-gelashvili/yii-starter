@@ -27,6 +27,7 @@ function ajaxData(returnData) {
         data: {_csrf: yii.getCsrfToken(), url: $('#url').val()},
         beforeSend: function () {
             $('#ajaxSpinner').show();
+            $('#main').css('display', 'none');
         },
         success: function (data) {
             returnData(data);

@@ -5,6 +5,7 @@ use app\models\Post;
 use yii\helpers\Html;
 use yii\helpers\StringHelper;
 
+$storage = 'http://storage.starter.test'
 ?>
 <div class="container">
     <div class="row">
@@ -16,7 +17,7 @@ use yii\helpers\StringHelper;
             </div>
             <div class="row">
                 <div class="col-md-3">
-                    <?= Html::img('@storage/web/source/upload/' . $model->post->post_image, ['class' => 'img-responsive']); ?>
+                    <?= Html::img('@storageUrl/source/upload' . '/' . $model->post->post_image, ['height' => '150px', 'width' => '90px']); ?>
                 </div>
                 <div class="col-md-9">
                     <p>

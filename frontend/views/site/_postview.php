@@ -16,15 +16,16 @@ use yii\helpers\Html; ?>
         <?php
         //        var_dump($model->post->post_image);
         //        exit;
-        echo Html::img(\yii\helpers\Url::to('@web/source/upload/' . $model->post->post_image), ['width' => '150px', 'height' => '100px']) ?>
+        echo Html::img('@storageUrl/source/upload/' . $model->post->post_image, ['width' => '150px', 'height' => '100px']) ?>
         <p>
             <?= $model->post_description ?>
         </p>
         <div style="width:350px;height: 150px">
             <?php
             $images = [];
+            $url = Yii::getAlias('@storageUrl');
             foreach ($model->post->images as $imageItem) {
-                $images[] = '<img src="' . 'uploads/' . $imageItem->image . '"/>';
+                $images[] = '<img src="' . $url . '/source/upload/' . $imageItem->image . '"/>';
             }
 
             echo \yii\bootstrap\Carousel::widget([
